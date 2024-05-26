@@ -1,8 +1,6 @@
 # ----------------------------------------------- Modules Declaration ------------------------------------------------ #
 from config import Config
 from forms import *
-
-from flask_debugtoolbar import DebugToolbarExtension
 import os
 import smtplib
 import datetime as dt
@@ -43,9 +41,6 @@ gravatar = Gravatar(app,
                     force_lower=False,
                     use_ssl=False,
                     base_url=None)
-app.debug = True
-toolbar = DebugToolbarExtension(app)
-
 
 
 @login_manager.user_loader
