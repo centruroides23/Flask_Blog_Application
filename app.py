@@ -16,7 +16,8 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from datetime import timedelta
 from flask_gravatar import Gravatar
 from functools import wraps
-from hashlib import md5
+import hmac
+
 
 # ---------------------------------------------- Variable Declaration ------------------------------------------------ #
 USERNAME = os.environ.get("USERNAME")
@@ -135,6 +136,21 @@ def admin_only(function):
 
     return decorated_function
 
+
+def safe_str_cmp(a: str, b: str) -> bool:
+    """This function compares strings in somewhat constant time. This
+    requires that the length of at least one string is known in advance.
+
+    Returns `True` if the two strings are equal, or `False` if they are not.
+    """
+
+    if isinstance(a, str):
+        a = a.encode("utf-8")  # type: ignore
+
+    if isinstance(b, str):
+        b = b.encode("utf-8")  # type: ignore
+
+    return hmac.compare_digest(a, b)
 
 # --------------------------------------------- Application Routes --------------------------------------------------- #
 @app.route("/")
