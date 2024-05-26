@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% from "bootstrap5/form.html" import render_form %}
+
+{% block title %}Make a Post{% endblock %}
+
+{% block content %}
+<main class="mb-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        {{ form.csrf_token }}
+        {{ render_form(form, novalidate=True) }}
+      </div>
+    </div>
+  </div>
+</main>
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='body') }}
+{% endblock %}

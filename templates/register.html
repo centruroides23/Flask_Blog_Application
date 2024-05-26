@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% from "bootstrap5/form.html" import render_form %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<main class="mb-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        {{ form.csrf_token }}
+        {% with messages = get_flashed_messages()%}
+          {% if messages%}
+            {% for message in messages%}
+              <p>{{message}}</p>
+            {%endfor%}
+          {%endif%}
+        {%endwith%}
+        {{ render_form(form, novalidate=True) }}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
