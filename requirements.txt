@@ -13,7 +13,7 @@ itsdangerous==1.1.0
 WTForms==2.3.3
 gunicorn==21.2.0
 psycopg2-binary==2.9.9
-requests~=2.31.0
+requests==2.24.0
 bleach~=6.1.0
 email_validator==1.1.1
 flask-bcrypt==0.7.1
