@@ -4,4 +4,4 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or os.urandom(32)
-    SQLALCHEMY_DATABASE_URI = "DB_URI"
+    SQLALCHEMY_DATABASE_URI = "POSTGRES_URL".replace("postgres://", "postgresql://")
