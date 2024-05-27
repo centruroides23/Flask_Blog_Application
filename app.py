@@ -17,6 +17,7 @@ from datetime import timedelta
 from flask_gravatar import Gravatar
 from functools import wraps
 
+
 # ---------------------------------------------- Variable Declaration ------------------------------------------------ #
 USERNAME = os.environ.get("USERNAME")
 PASSWORD = os.environ.get("PASSWORD")
