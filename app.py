@@ -11,7 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Text, ForeignKey
 from flask_ckeditor import CKEditor
-from flask_bcrypt import Bcrypt
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from datetime import timedelta
 from flask_gravatar import Gravatar
@@ -29,7 +29,6 @@ CURRENT_YEAR = dt.datetime.now().year
 app = Flask(__name__)
 app.config.from_object(Config)
 ckeditor = CKEditor(app)
-bcrypt = Bcrypt(app)
 Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -135,22 +134,6 @@ def admin_only(function):
             return abort(403)
 
     return decorated_function
-
-
-def safe_str_cmp(a: str, b: str) -> bool:
-    """This function compares strings in somewhat constant time. This
-    requires that the length of at least one string is known in advance.
-
-    Returns `True` if the two strings are equal, or `False` if they are not.
-    """
-
-    if isinstance(a, str):
-        a = a.encode("utf-8")  # type: ignore
-
-    if isinstance(b, str):
-        b = b.encode("utf-8")  # type: ignore
-
-    return hmac.compare_digest(a, b)
 
 # --------------------------------------------- Application Routes --------------------------------------------------- #
 @app.route("/")
@@ -297,7 +280,9 @@ def register():
     if form.validate_on_submit():
         current_username = form.username.data
         current_email = form.email.data
-        password = bcrypt.generate_password_hash(password=form.password.data).decode("utf-8")
+        password = generate_password_hash(password=form.password.data,
+                                          method='pbkdf2:sha256',
+                                          salt_length=8)
 
         result_username = db.session.execute(db.select(Users).where(Users.username == current_username))
         result_email = db.session.execute(db.select(Users).where(Users.email == current_email))
@@ -334,7 +319,7 @@ def login():
         user = result.scalar()
         if not user:
             flash(message="The username does not exist", category="danger")
-        elif not bcrypt.check_password_hash(user.password, current_password):
+        elif not check_password_hash(user.password, current_password):
             flash(message="Password incorrect, please try again.", category="danger")
         else:
             login_user(user)
