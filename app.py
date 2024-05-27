@@ -16,8 +16,6 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from datetime import timedelta
 from flask_gravatar import Gravatar
 from functools import wraps
-import hmac
-
 
 # ---------------------------------------------- Variable Declaration ------------------------------------------------ #
 USERNAME = os.environ.get("USERNAME")
