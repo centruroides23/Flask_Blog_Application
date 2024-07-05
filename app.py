@@ -2,7 +2,8 @@
 from config import Config
 from forms import *
 import os
-import smtplib
+import asyncio
+import aiosmtplib
 import datetime as dt
 import bleach
 from flask import Flask, render_template, redirect, url_for, flash, abort
@@ -17,9 +18,9 @@ from datetime import timedelta
 from flask_gravatar import Gravatar
 from functools import wraps
 
-
 # ---------------------------------------------- Variable Declaration ------------------------------------------------ #
 USERNAME = os.environ.get("USERNAME")
+PERSONAL_USERNAME = os.environ.get("PERSONAL_USERNAME")
 PASSWORD = os.environ.get("PASSWORD")
 CURRENT_DATE = dt.datetime.now().date()
 CURRENT_YEAR = dt.datetime.now().year
@@ -134,6 +135,13 @@ def admin_only(function):
 
     return decorated_function
 
+
+async def send_email_async(msg):
+    async with aiosmtplib.SMTP(hostname="smtp.gmail.com", port=587) as connection:
+        await connection.login(USERNAME, PASSWORD)
+        await connection.sendmail(USERNAME, USERNAME_PERSONAL, msg)
+
+
 # --------------------------------------------- Application Routes --------------------------------------------------- #
 @app.route("/")
 def index():
@@ -230,7 +238,6 @@ def contact():
     filename = "contact-bg.jpg"
     logged_in = current_user.is_authenticated
     form = ContactForm()
-    print(PASSWORD)
     if form.validate_on_submit():
         username = form.name.data
         email = form.email.data
@@ -238,13 +245,8 @@ def contact():
         message = form.message.data
         full_email = (f"Subject: Message from Philosophy Blog\n\n{message.encode('windows-1252')}\n\n\n"
                       f"From: {username}\nEmail: {email}\nPhone Number: {phone_number}")
-        with smtplib.SMTP("smtp.gmail.com") as connection:
-            connection.starttls()
-            connection.login(user=USERNAME, password=PASSWORD)
-            connection.sendmail(from_addr=USERNAME,
-                                to_addrs=USERNAME,
-                                msg=full_email)
-            return redirect(url_for("receive_data"))
+        asyncio.run(send_email_async(full_email))
+        return redirect(url_for("receive_data"))
     return render_template("contact.html",
                            filename=filename,
                            year=str(CURRENT_YEAR),
@@ -338,4 +340,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)

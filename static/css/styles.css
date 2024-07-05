@@ -597,6 +597,17 @@ progress {
   content: "— ";
 }
 
+.img-contact {
+    border-radius: 50%;
+    height: 15em;
+    width: 15em;
+    margin: auto;
+}
+
+.about-name {
+    text-align: center;
+}
+
 .img-fluid {
   max-width: 100%;
   height: auto;
