@@ -139,7 +139,7 @@ def admin_only(function):
 async def send_email_async(msg):
     async with aiosmtplib.SMTP(hostname="smtp.gmail.com", port=587) as connection:
         await connection.login(USERNAME, PASSWORD)
-        await connection.sendmail(USERNAME, USERNAME_PERSONAL, msg)
+        await connection.sendmail(USERNAME, PERSONAL_USERNAME, msg)
 
 
 # --------------------------------------------- Application Routes --------------------------------------------------- #
